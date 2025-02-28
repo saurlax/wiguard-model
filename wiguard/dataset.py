@@ -1,5 +1,5 @@
 import os
-from re import T
+from re import T, sub
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
@@ -11,7 +11,7 @@ CLIP_SIZE = 90
 SUBCARRIES = 64
 LABELS = ['empty', 'fall', 'walk']
 CUT_LEN = True
-MIX = False # 是否混合多日数据
+MIX = True # 是否混合多日数据
 PRINTSHORT = False # 是否打印数据长度小于clip_size的样本
 SHORTDELETE = False # 是否删除数据长度小于clip_size的样本
 
@@ -42,6 +42,8 @@ class CSIDataset(Dataset):
         if MIX:
             subfiles = os.listdir(dir_path)
             for subfile in subfiles:
+                if subfile.startswith('.'):
+                    continue
                 subfile_path = os.path.join(dir_path, subfile)
                 for label in LABELS:
                     label_number = LABELS.index(label)
@@ -72,6 +74,7 @@ class CSIDataset(Dataset):
         """
         csi_data = []
         for data_path in data_paths:
+            # print(data_path)
             data = pd.read_csv(data_path, header=None)
             first_row = data.iloc[0]
             if first_row[0] == "CSI_DATA":
