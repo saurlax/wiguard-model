@@ -1,15 +1,14 @@
 import os
-from re import T, sub
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
 import pandas as pd
 
 # 截取的数据长度
-CLIP_SIZE = 90
+CLIP_SIZE = 60
 # 子载波数
 SUBCARRIES = 64
-LABELS = ['empty', 'fall', 'walk']
+LABELS = ['empty', 'fall', "walk"]
 CUT_LEN = True
 MIX = True # 是否混合多日数据
 PRINTSHORT = False # 是否打印数据长度小于clip_size的样本
@@ -51,7 +50,7 @@ class CSIDataset(Dataset):
                     # print(class_data_path)
                     files = os.listdir(class_data_path)
                     for file in files:
-                        if file.endswith('.csv'):
+                        if file.endswith('.csv') or file.endswith('.txt'):
                             data_files.append(os.path.join(class_data_path, file))
                             files_labels.append(label_number)
             return data_files, files_labels
@@ -72,10 +71,14 @@ class CSIDataset(Dataset):
         :param data_paths: 一个列表,列表中的每个元素是一个数据文件的路径
         :return: csi_data 一个列表,列表中的每个元素是一个数据文件的CSI数据
         """
+        # cnt = 0
         csi_data = []
         for data_path in data_paths:
             # print(data_path)
             data = pd.read_csv(data_path, header=None)
+            # cnt += 1
+            # if cnt%10 == 1:
+            #     print(data)
             first_row = data.iloc[0]
             if first_row[0] == "CSI_DATA":
                 csidata = np.array([np.array(eval(csi))
@@ -173,7 +176,7 @@ def process_single_csv_file(csv_path):
 
 if __name__ == '__main__':
     BATCH_SIZE = 2
-    csi_dataset = CSIDataset('./data')
+    csi_dataset = CSIDataset('./data/train')
     total_size = len(csi_dataset)
     train_size = int(total_size * 0.8)
     val_size = total_size - train_size
