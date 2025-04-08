@@ -5,12 +5,10 @@ from torch.utils.data import random_split
 import pandas as pd
 
 # 截取的数据长度
-CLIP_SIZE = 60
-# 子载波数
-SUBCARRIES = 64
-LABELS = ['empty', 'fall', "walk"]
+CLIP_SIZE = 145
+LABELS = ["fall", "other"]
 CUT_LEN = True
-MIX = True # 是否混合多日数据
+MIX = False # 是否混合多日数据
 PRINTSHORT = False # 是否打印数据长度小于clip_size的样本
 SHORTDELETE = False # 是否删除数据长度小于clip_size的样本
 
@@ -60,7 +58,7 @@ class CSIDataset(Dataset):
                 class_data_path = os.path.join(dir_path, label)
                 files = os.listdir(class_data_path)
                 for file in files:
-                    if file.endswith('.csv'):
+                    if file.endswith('.csv') or file.endswith('.txt'):
                         data_files.append(os.path.join(class_data_path, file))
                         files_labels.append(label_number)
             return data_files, files_labels
@@ -176,7 +174,7 @@ def process_single_csv_file(csv_path):
 
 if __name__ == '__main__':
     BATCH_SIZE = 2
-    csi_dataset = CSIDataset('./data/train')
+    csi_dataset = CSIDataset('./data/train/c5')
     total_size = len(csi_dataset)
     train_size = int(total_size * 0.8)
     val_size = total_size - train_size

@@ -16,17 +16,17 @@ logging.basicConfig(level=logging.INFO)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 logging.info("Device: {}".format(device))
 
-SUBCARRIES = 64  # 子载波数
-LABELS_NUM = 3
+SUBCARRIES = 117  # 子载波数
+LABELS_NUM = 2
 EPOCHS_NUM = 200
 LEARNING_RATE = 0.001
-BATCH_SIZE = 8
+BATCH_SIZE = 64
 ENC_SEQ_LEN = 6  # 编码器序列长度
 DEC_SQL_LEN = 4  # 解码器序列长度
 DIM_VAL = 32  # value的维度
 DIM_ATTN = 8  # attention的维度
 N_HEADS = 4  # 多头注意力的头数
-N_ENCODER_LAYERS =4  # 编码器层数
+N_ENCODER_LAYERS = 4  # 编码器层数
 N_DECODER_LAYERS = 4  # 解码器层数
 WEIGHT_DECAY = 1e-4  # 权重衰减
 
@@ -51,7 +51,8 @@ def test_train():
     log_dir = os.path.join('./logs', sys.argv[1])
     # 准备数据集
     if MIX: data_path = './data/train'
-    else: data_path = os.path.join('./data/train', sys.argv[2])
+    # else: data_path = os.path.join('./data/train', sys.argv[2])
+    else: data_path = './data/final'
     print(data_path)
     csi_dataset = CSIDataset(data_path)
     # print(len(csi_dataset))
